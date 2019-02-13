@@ -1,8 +1,10 @@
 package v1beta1
 
 import (
+	"strings"
+
 	"github.com/ghodss/yaml"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/helm/pkg/chartutil"
 
@@ -60,6 +62,14 @@ type RepoChartSource struct {
 	// An authentication secret for accessing the chart repo
 	// +optional
 	ChartPullSecret *v1.LocalObjectReference `json:"chartPullSecret,omitempty"`
+}
+
+// CleanRepoURL returns the RepoURL but ensures it ends with a trailing slash
+func (s RepoChartSource) CleanRepoURL() string {
+	if strings.HasSuffix(s.RepoURL, "/") {
+		return s.RepoURL
+	}
+	return s.RepoURL + "/"
 }
 
 // FluxHelmReleaseSpec is the spec for a FluxHelmRelease resource
